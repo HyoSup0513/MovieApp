@@ -8,7 +8,7 @@ router.post("/favoriteNumber", (req, res) => {
   Favorite.find({ movieId: req.body.movieId }).exec((err, info) => {
     if (err) return res.status(400).send(err);
 
-    return res.status(200).json({ success: true, favoriteNumber: info.length });
+    res.status(200).json({ success: true, favoriteNumber: info.length });
   });
 });
 
@@ -22,11 +22,11 @@ router.post("/favorited", (req, res) => {
 
     // If user didn't favorite
     let result = false;
-    if (info.length != 0) {
+    if (info.length !== 0) {
       result = true;
     }
 
-    return res.status(200).json({ success: true, favorited: result });
+    res.status(200).json({ success: true, favorited: result });
   });
 });
 
@@ -44,9 +44,10 @@ router.post("/removeFromFavorite", (req, res) => {
 // Add to favorite
 router.post("/addToFavorite", (req, res) => {
   const favorite = new Favorite(req.body);
+
   favorite.save((err, doc) => {
     if (err) return res.json({ success: false, err });
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ success: true, doc });
   });
 });
 

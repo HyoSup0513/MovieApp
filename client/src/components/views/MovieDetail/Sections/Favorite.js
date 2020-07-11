@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { Button } from "antd";
+import { useSelector } from "react-redux";
 
 function Favorite(props) {
+  const user = useSelector((state) => state.user);
+
   const movieId = props.movieId;
   const userFrom = props.userFrom;
   const movieTitle = props.movieinfo.title;
@@ -11,7 +14,6 @@ function Favorite(props) {
 
   const [FavoriteNumber, setFavoriteNumber] = useState(0);
   const [Favorited, setFavorited] = useState(false);
-
   const variables = {
     userFrom,
     movieId,
@@ -21,24 +23,28 @@ function Favorite(props) {
   };
 
   const onClickFavorite = () => {
-    if (Favorited) {
+    if (user.userData && !user.userData.isAuth) {
+      return alert("Please Log in first");
+    }
+
+    if (Favorited === true) {
       // Remove from favorite
       Axios.post("/api/favorite/removeFromFavorite", variables).then(
         (response) => {
           if (response.data.success) {
             setFavoriteNumber(FavoriteNumber - 1);
-            setFavorited(!Favorited);
+            setFavorited(false);
           } else {
             alert("Failed to Remove From Favorite");
           }
         }
       );
-    } else {
+    } else if (Favorited === false) {
       // Add to favorite
       Axios.post("/api/favorite/addToFavorite", variables).then((response) => {
         if (response.data.success) {
           setFavoriteNumber(FavoriteNumber + 1);
-          setFavorited(!Favorited);
+          setFavorited(true);
         } else {
           alert("Failed to Add To Favorite");
         }
@@ -47,24 +53,36 @@ function Favorite(props) {
   };
 
   useEffect(() => {
-    Axios.get("/api/favorite/favoriteNumber", variables).then((response) => {
-      console.log(response.data);
-      setFavoriteNumber(response.data.FavoriteNumber);
+    Axios.post("/api/favorite/favoriteNumber", variables).then((response) => {
       if (response.data.success) {
+        setFavoriteNumber(response.data.favoriteNumber);
       } else {
         alert("Failed to get number of favorites.");
       }
     });
 
     Axios.post("/api/favorite/favorited", variables).then((response) => {
-      console.log(response.data);
-      setFavorited(response.data.Favorited);
-      if (response.data.success) {
+      if (response.data.favorited === true) {
+        setFavorited(true);
+      } else if (response.data.favorited === false) {
+        setFavorited(false);
       } else {
-        alert("Failed to get favorite data.");
+        alert("Error");
       }
     });
   }, []);
+
+  // useEffect(() => {
+  //   Axios.get("/api/favorite/favorited", variables).then((response) => {
+  //     if (response.data.favorited === true) {
+  //       setFavorited(true);
+  //     } else if (response.data.favorited === false) {
+  //       setFavorited(false);
+  //     } else {
+  //       alert("Error");
+  //     }
+  //   });
+  // }, []);
 
   return (
     <Button onClick={onClickFavorite}>
