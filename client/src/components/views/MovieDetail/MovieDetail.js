@@ -4,6 +4,7 @@ import MovieInfo from "./Sections/MovieInfo";
 import { API_URL, API_KEY, IMAGE_BASE_URL, POSTER_SIZE } from "../../Config";
 import GridCards from "../Commons/GridCards";
 import { Row } from "antd";
+import Favorite from "./Sections/Favorite";
 
 function MovieDetail(props) {
   // Get movie id
@@ -45,7 +46,16 @@ function MovieDetail(props) {
         text={Movie.overview}
       />
 
-      <div style={{ witdh: "85%", margin: "1rem auto" }}></div>
+      <div style={{ witdh: "85%", margin: "1rem auto" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Favorite
+            movieinfo={Movie}
+            movieId={movieId}
+            userFrom={localStorage.getItem("userId")}
+          />
+        </div>
+      </div>
+
       {/*  Movie Info */}
       <MovieInfo movie={Movie} />
 

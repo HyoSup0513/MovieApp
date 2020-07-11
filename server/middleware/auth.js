@@ -4,7 +4,7 @@ let auth = (req, res, next) => {
   // Authentication
 
   // Brings toek nfrom Client's token.
-  let token = req.cookies.x_auth;
+  let token = req.cookies.w_auth;
 
   // Encrypt toekn, find user.
   User.findByToken(token, (err, user) => {
