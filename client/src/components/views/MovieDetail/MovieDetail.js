@@ -5,6 +5,8 @@ import { API_URL, API_KEY, IMAGE_BASE_URL, POSTER_SIZE } from "../../Config";
 import GridCards from "../Commons/GridCards";
 import { Row } from "antd";
 import Favorite from "./Sections/Favorite";
+import Comment from "./Sections/Comments";
+import Axios from "axios";
 
 function MovieDetail(props) {
   // Get movie id
@@ -12,6 +14,10 @@ function MovieDetail(props) {
   const [Movie, setMovie] = useState([]);
   const [Casts, setCasts] = useState([]);
   const [ActorToggle, setActorToggle] = useState(false);
+  const [CommentLists, setCommentLists] = useState([]);
+  const movieVariable = {
+    movieId: movieId,
+  };
 
   useEffect(() => {
     // Information of Crew
@@ -31,8 +37,21 @@ function MovieDetail(props) {
         console.log("responseForCrew", response);
         setCasts(response.cast);
       });
+
+    Axios.post("/api/comment/getComments", movieVariable).then((response) => {
+      console.log(response);
+      if (response.data.success) {
+        console.log("response.data.comments", response.data.comments);
+        setCommentLists(response.data.comments);
+      } else {
+        alert("Failed to get comments Info");
+      }
+    });
   }, []);
 
+  const updateComment = (newComment) => {
+    setCommentLists(CommentLists.concat(newComment));
+  };
   const toggleActorView = () => {
     setActorToggle(!ActorToggle);
   };
@@ -64,7 +83,7 @@ function MovieDetail(props) {
       <div
         style={{ display: "flex", justifyContent: "center", margin: "2rem" }}
       >
-        <button onClick={toggleActorView}> Toggle Actor View</button>
+        <Button onClick={toggleActorView}> Toggle Actor View</Button>
       </div>
 
       <div style={{ width: "85%", margin: "1rem auto" }}>
@@ -86,6 +105,14 @@ function MovieDetail(props) {
               ))}
           </Row>
         )}
+
+        {/* Comments */}
+        <Comment
+          title={Movie.original_title}
+          CommentLists={CommentLists}
+          postId={movieId}
+          refreshFunction={updateComment}
+        />
       </div>
     </div>
   );
