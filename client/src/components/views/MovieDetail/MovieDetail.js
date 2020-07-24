@@ -7,6 +7,7 @@ import { Row } from "antd";
 import Favorite from "./Sections/Favorite";
 import Comment from "./Sections/Comments";
 import Axios from "axios";
+import { Button } from "antd";
 
 function MovieDetail(props) {
   // Get movie id
