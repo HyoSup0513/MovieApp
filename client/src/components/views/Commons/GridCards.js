@@ -3,7 +3,7 @@ import { Col } from "antd";
 import { IMAGE_BASE_URL } from "../../Config";
 
 function GridCards(props) {
-  let { key, image, movieId, movieName, characterName } = props;
+  let { key, image, movieId, movieName, characterName, movieRate } = props;
 
   if (props.actor) {
     return (
@@ -27,6 +27,7 @@ function GridCards(props) {
               alt={movieName}
               src={image}
             />
+            {movieRate}
           </a>
         </div>
       </Col>

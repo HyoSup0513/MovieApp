@@ -9,18 +9,26 @@ import {
 } from "../../Config";
 import MainImage from "./Sections/MainImage";
 import GridCards from "../Commons/GridCards";
+import MovieByLatest from "./MovieByLatest";
+import MovieByNowPlaying from "./MovieByNowPlaying";
+import MovieByPopular from "./MovieByPopular";
+
 const { Title } = Typography;
 
 function LandingPage() {
   const buttonRef = useRef(null);
 
+  const [stateOne, setstateOne] = useState(false);
+  const [stateTwo, setstateTwo] = useState(true);
+  const [stateThree, setstateThree] = useState(true);
+
+  const view = "popular";
   const [Movies, setMovies] = useState([]);
   const [MainMovieImage, setMainMovieImage] = useState(null);
   const [CurrentPage, setCurrentPage] = useState(0);
-
+  const endpoint = `${API_URL}movie/${view}?api_key=${API_KEY}&language=en-US&page=1`;
   // Main Page's image
   useEffect(() => {
-    const endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
     fetchMovies(endpoint);
   }, []);
 
@@ -28,7 +36,6 @@ function LandingPage() {
     fetch(endpoint)
       .then((result) => result.json())
       .then((result) => {
-        console.log(result);
         // Just add state
         setMovies([...Movies, ...result.results]);
         setMainMovieImage(result.results[0]);
@@ -36,9 +43,28 @@ function LandingPage() {
       });
   };
 
+  // change view state on button click
+  const viewLatest = () => {
+    setstateOne(false);
+    setstateTwo(true);
+    setstateThree(true);
+  };
+
+  const viewPlaying = () => {
+    setstateOne(true);
+    setstateTwo(false);
+    setstateThree(false);
+  };
+
+  const viewPopular = () => {
+    setstateOne(true);
+    setstateTwo(true);
+    setstateThree(false);
+  };
+
   // Load More Button
   const loadMoreItems = () => {
-    const endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${
+    const endpoint = `${API_URL}movie/${view}?api_key=${API_KEY}&language=en-US&page=${
       CurrentPage + 1
     }`;
     fetchMovies(endpoint);
@@ -55,29 +81,29 @@ function LandingPage() {
         />
       )}
 
-      {/* Grid Cards */}
       <div style={{ width: "85%", margin: "1rem auto" }}>
-        <h2> Movies by latest </h2>
-        <hr />
-        <Row gutter={[16, 16]}>
-          {Movies &&
-            Movies.map((movie, index) => (
-              <React.Fragment key={index}>
-                <GridCards
-                  image={
-                    movie.poster_path
-                      ? `${IMAGE_BASE_URL}${POSTER_SIZE}${movie.poster_path}`
-                      : null
-                  }
-                  movieId={movie.id}
-                  movieName={movie.original_title}
-                />
-              </React.Fragment>
-            ))}
-        </Row>
+        <Button onClick={viewLatest}>Top Rated</Button>
+        <Button onClick={viewPlaying}>Now Playing</Button>
+        <Button onClick={viewPopular}>Popular Movies</Button>
+        {!stateOne && (
+          <div>
+            <MovieByLatest />
+          </div>
+        )}
+        {!stateTwo && (
+          <div>
+            <MovieByNowPlaying />
+          </div>
+        )}
+        {!stateThree && (
+          <div>
+            <MovieByPopular />
+          </div>
+        )}
       </div>
+
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <button onClick={loadMoreItems}>Load More</button>
+        <Button onClick={loadMoreItems}>Load More</Button>
       </div>
     </div>
   );
