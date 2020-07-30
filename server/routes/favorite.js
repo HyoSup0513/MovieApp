@@ -51,7 +51,7 @@ router.post("/addToFavorite", (req, res) => {
   });
 });
 
-//
+// Get favorited Movie
 router.post("/getFavoritedMovie", (req, res) => {
   Favorite.find({ userFrom: req.body.userFrom }).exec((err, favorites) => {
     if (err) return res.json({ success: false, err });

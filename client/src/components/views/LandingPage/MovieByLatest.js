@@ -12,8 +12,6 @@ import GridCards from "../Commons/GridCards";
 const { Title } = Typography;
 
 function MovieByLatest() {
-  const buttonRef = useRef(null);
-
   const [Movies, setMovies] = useState([]);
   const [MainMovieImage, setMainMovieImage] = useState(null);
   const [CurrentPage, setCurrentPage] = useState(0);

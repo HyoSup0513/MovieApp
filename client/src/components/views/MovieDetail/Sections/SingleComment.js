@@ -3,7 +3,6 @@ import { Comment, Avatar, Button, Input } from "antd";
 import Axios from "axios";
 import { useSelector } from "react-redux";
 import LikeDislikes from "./LikeDislike";
-import { set } from "mongoose";
 const { TextArea } = Input;
 
 function SingleComment(props) {
@@ -40,6 +39,21 @@ function SingleComment(props) {
     });
   };
 
+  const onDelete = (e) => {
+    e.preventDefault();
+
+    const variables = {
+      writer: user.userData._id,
+      postId: props.postId,
+      commentId: props.comment._id,
+      content: CommentValue,
+    };
+
+    Axios.delete("/api/comment/deleteComment", variables).then((response) => {
+      props.refreshFunction(response.data.result);
+    });
+  };
+
   const actions = [
     <LikeDislikes
       comment
@@ -49,6 +63,10 @@ function SingleComment(props) {
     <span onClick={openReply} key="comment-basic-reply-to">
       Reply to{" "}
     </span>,
+
+    <Button style={{ width: "20%", height: "52px" }} onClick={onDelete}>
+      Delete
+    </Button>,
   ];
 
   return (

@@ -8,10 +8,28 @@ import Favorite from "./Sections/Favorite";
 import Comment from "./Sections/Comments";
 import Axios from "axios";
 import { Button } from "antd";
+import { makeStyles } from "@material-ui/core/styles";
+import GridList from "@material-ui/core/GridList";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    overflow: "hidden",
+    backgroundColor: theme.palette.background.paper,
+  },
+  gridList: {
+    flexWrap: "nowrap",
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: "translateZ(0)",
+  },
+}));
 
 function MovieDetail(props) {
   // Get movie id
   let movieId = props.match.params.movieId;
+
   const [Movie, setMovie] = useState([]);
   const [Casts, setCasts] = useState([]);
   const [ActorToggle, setActorToggle] = useState(false);
@@ -19,6 +37,7 @@ function MovieDetail(props) {
   const movieVariable = {
     movieId: movieId,
   };
+  const classes = useStyles();
 
   useEffect(() => {
     // Information of Crew
@@ -87,26 +106,30 @@ function MovieDetail(props) {
         <Button onClick={toggleActorView}> Toggle Actor View</Button>
       </div>
 
-      <div style={{ width: "85%", margin: "1rem auto" }}>
-        {ActorToggle && (
-          <Row gutter={[16, 16]}>
-            {Casts &&
-              Casts.map((cast, index) => (
-                <React.Fragment key={index}>
-                  <GridCards
-                    actor
-                    image={
-                      cast.profile_path
-                        ? `${IMAGE_BASE_URL}w500${cast.profile_path}`
-                        : undefined
-                    }
-                    characterName={cast.name}
-                  />
-                </React.Fragment>
-              ))}
-          </Row>
-        )}
+      <div className={classes.root}>
+        <GridList className={classes.gridList} cols={1.2}>
+          {ActorToggle && (
+            <Row gutter={[16, 16]}>
+              {Casts &&
+                Casts.map((cast, index) => (
+                  <React.Fragment key={index}>
+                    <GridCards
+                      actor
+                      image={
+                        cast.profile_path
+                          ? `${IMAGE_BASE_URL}${POSTER_SIZE}${cast.profile_path}`
+                          : undefined
+                      }
+                      characterName={cast.name}
+                    />
+                  </React.Fragment>
+                ))}
+            </Row>
+          )}
+        </GridList>
+      </div>
 
+      <div>
         {/* Comments */}
         <Comment
           title={Movie.original_title}

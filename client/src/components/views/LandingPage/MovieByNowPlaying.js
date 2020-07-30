@@ -7,13 +7,10 @@ import {
   IMAGE_SIZE,
   POSTER_SIZE,
 } from "../../Config";
-import MainImage from "./Sections/MainImage";
 import GridCards from "../Commons/GridCards";
 const { Title } = Typography;
 
 function MovieByNowPlaying() {
-  const buttonRef = useRef(null);
-
   const [Movies, setMovies] = useState([]);
   const [MainMovieImage, setMainMovieImage] = useState(null);
   const [CurrentPage, setCurrentPage] = useState(0);

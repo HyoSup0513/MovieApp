@@ -16,13 +16,11 @@ import MovieByPopular from "./MovieByPopular";
 const { Title } = Typography;
 
 function LandingPage() {
-  const buttonRef = useRef(null);
-
   const [stateOne, setstateOne] = useState(false);
   const [stateTwo, setstateTwo] = useState(true);
   const [stateThree, setstateThree] = useState(true);
 
-  const view = "popular";
+  const [view, setview] = useState("popular");
   const [Movies, setMovies] = useState([]);
   const [MainMovieImage, setMainMovieImage] = useState(null);
   const [CurrentPage, setCurrentPage] = useState(0);
@@ -53,7 +51,7 @@ function LandingPage() {
   const viewPlaying = () => {
     setstateOne(true);
     setstateTwo(false);
-    setstateThree(false);
+    setstateThree(true);
   };
 
   const viewPopular = () => {
@@ -82,9 +80,15 @@ function LandingPage() {
       )}
 
       <div style={{ width: "85%", margin: "1rem auto" }}>
-        <Button onClick={viewLatest}>Top Rated</Button>
-        <Button onClick={viewPlaying}>Now Playing</Button>
-        <Button onClick={viewPopular}>Popular Movies</Button>
+        <Button style={{ margin: 5 }} onClick={viewLatest}>
+          Top Rated
+        </Button>
+        <Button style={{ margin: 5 }} onClick={viewPlaying}>
+          Now Playing
+        </Button>
+        <Button style={{ margin: 5 }} onClick={viewPopular}>
+          Popular Movies
+        </Button>
         {!stateOne && (
           <div>
             <MovieByLatest />

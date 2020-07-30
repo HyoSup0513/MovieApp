@@ -28,10 +28,13 @@ router.post("/getComments", (req, res) => {
     });
 });
 
-router.delete("/deleteComment", function (req, res) {
-  Comment.findOneAndDelete(req.body.comment, function (err, Comment) {
-    console.log("DELETE removing ID: " + Comment);
-  });
+router.delete("/deleteComment", (req, res) => {
+  Comment.findOneandDelete({ postId: req.body.movieId })
+    .populate("writer")
+    .exec((err, comments) => {
+      if (err) return res.status(400).send(err);
+      res.status(200).json({ success: true, comments });
+    });
 });
 
 module.exports = router;
