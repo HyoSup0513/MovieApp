@@ -26,6 +26,7 @@ function Comments(props) {
       content: Comment,
       writer: user.userData._id,
       postId: props.postId,
+      replyComment: props.replyComment,
     };
     console.log(variables);
 
@@ -56,6 +57,7 @@ function Comments(props) {
                   comment={comment}
                   postId={props.postId}
                   refreshFunction={props.refreshFunction}
+                  replyComment={props.replyComment}
                 />
 
                 <ReplyComment
@@ -63,6 +65,7 @@ function Comments(props) {
                   postId={props.postId}
                   parentCommentId={comment._id}
                   refreshFunction={props.refreshFunction}
+                  replyComment={props.replyComment}
                 />
               </React.Fragment>
             )

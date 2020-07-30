@@ -3,6 +3,8 @@ import { Comment, Avatar, Button, Input } from "antd";
 import Axios from "axios";
 import { useSelector } from "react-redux";
 import LikeDislikes from "./LikeDislike";
+import { commentNum } from "./ReplyComment";
+
 const { TextArea } = Input;
 
 function SingleComment(props) {
@@ -26,11 +28,13 @@ function SingleComment(props) {
       postId: props.postId,
       responseTo: props.comment._id,
       content: CommentValue,
+      replyComment: commentNum,
     };
+    console.log(variables.replyComment);
 
     Axios.post("/api/comment/saveComment", variables).then((response) => {
       if (response.data.success) {
-        setCommentValue("");
+        // setCommentValue("");
         setOpenReply(!OpenReply);
         props.refreshFunction(response.data.result);
       } else {
@@ -40,18 +44,27 @@ function SingleComment(props) {
   };
 
   const onDelete = (e) => {
-    e.preventDefault();
-
     const variables = {
       writer: user.userData._id,
       postId: props.postId,
       commentId: props.comment._id,
       content: CommentValue,
+      replyComment: commentNum,
     };
+    const checkwriter = props.comment.writer._id;
+    console.log(checkwriter);
 
-    Axios.delete("/api/comment/deleteComment", variables).then((response) => {
-      props.refreshFunction(response.data.result);
-    });
+    if (variables.replyComment === 0) {
+      if (checkwriter === variables.writer) {
+        Axios.post("/api/comment/deleteComment", variables).then((response) => {
+          props.refreshFunction(response.data.result);
+        });
+      } else {
+        alert("Invalid User: failed to delete the comment.");
+      }
+    } else {
+      alert("Nested Comment");
+    }
   };
 
   const actions = [
@@ -64,9 +77,13 @@ function SingleComment(props) {
       Reply to{" "}
     </span>,
 
-    <Button style={{ width: "20%", height: "52px" }} onClick={onDelete}>
-      Delete
-    </Button>,
+    <div>
+      <Button onClick={onDelete}>Delete</Button>
+    </div>,
+
+    <div>
+      <Button>Edit</Button>
+    </div>,
   ];
 
   return (
@@ -76,6 +93,7 @@ function SingleComment(props) {
         author={props.comment.writer.name}
         avatar={<Avatar src={props.comment.writer.image} alt="image" />}
         content={<p>{props.comment.content}</p>}
+        replyComment={props.replyComment}
       ></Comment>
 
       <br />

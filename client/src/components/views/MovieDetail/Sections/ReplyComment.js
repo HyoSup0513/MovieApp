@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import SingleComment from "./SingleComment";
+export let commentNum;
 
 function ReplyComment(props) {
   const [ChildCommentNumber, setChildCommentNumber] = useState(0);
   const [OpenReplyComments, setOpenReplyComments] = useState(false);
+
   useEffect(() => {
     let commentNumber = 0;
     props.CommentLists.map((comment) => {
@@ -11,7 +13,9 @@ function ReplyComment(props) {
         commentNumber++;
       }
     });
+    console.log("Comment Number", commentNumber);
     setChildCommentNumber(commentNumber);
+    commentNum = commentNumber;
   }, [props.CommentLists, props.parentCommentId]);
 
   let renderReplyComment = (parentCommentId) =>
@@ -23,12 +27,14 @@ function ReplyComment(props) {
               comment={comment}
               postId={props.postId}
               refreshFunction={props.refreshFunction}
+              replyComment={ChildCommentNumber}
             />
             <ReplyComment
               CommentLists={props.CommentLists}
               parentCommentId={comment._id}
               postId={props.postId}
               refreshFunction={props.refreshFunction}
+              replyComment={ChildCommentNumber}
             />
           </div>
         )}
